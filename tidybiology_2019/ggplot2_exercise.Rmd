@@ -53,7 +53,7 @@ ggplot(mitocarta, aes(x = hg19_chromosome, y = log(protein_length))) +
   geom_violin()
 ```
 
-Let's make this plot nicer. How would you add the following as a plot title - "Protein length distributions across different chromosomes"? Also, re,pve the underscore from the y-axis label
+Let's make this plot nicer. How would you add the following as a plot title - "Protein length distributions across different chromosomes"? Also, remove the underscore from the y-axis label
 ```{r}
 ggplot(mitocarta, aes(x = hg19_chromosome, y = log(protein_length))) +
   geom_violin() +

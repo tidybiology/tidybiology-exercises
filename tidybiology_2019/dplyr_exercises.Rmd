@@ -40,7 +40,7 @@ chromosome %>%
   slice(1:5)
 ```
 
-Using the `protein_codinggenes` and `pseudo_genes` variables, create a new variable called `total_genes` that contains the sum of protein coding genes and pseudogenes
+Using the `protein_codinggenes` and `pseudo_genes` variables, create a new variable called `total_genes` that contains the sum of protein coding genes and pseudogenes. Save the output of this as a new object, also called `chromosome`
 
 ```{r}
 chromosome <- chromosome %>% 
@@ -61,7 +61,7 @@ Take a glimpse at the `mitocarta` dataframe
 glimpse(mitocarta)
 ```
 
-How many *unique* entries are there in this dataframe?
+How many *unique* entries are there in the column `mito_domain_score`?
 
 ```{r}
 mitocarta %>% 

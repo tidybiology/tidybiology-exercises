@@ -42,7 +42,7 @@ How would you test if the following motif - "RCP.L" - was in a particular sequen
 ```{r}
 str_detect(proteins$sequence, "RCP.L")
 sum(str_detect(proteins$sequence, "RCP.L"))
-# "." 
+# "." represents any character
 ```
 
 How would you create a new dataframe that only contains proteins that contain the "RCP.L" motif?

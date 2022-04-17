@@ -147,7 +147,7 @@ ggExtra::ggMarginal(
 )
 ```
 
-Give the previous plot appropriate labels for the x- and y-axes, and a title. Also make the x- and y-axis values bold, and remove the colour legend
+Give the previous plot appropriate labels for the x- and y-axes, and a title. Also make the x- and y-axis text bold, and remove the colour legend
 ```{r}
 p1 <- ggplot(three_organ_df, aes(x = cell_1, y = cell_2)) +
   geom_point(

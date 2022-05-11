@@ -88,7 +88,7 @@ Finally, let's work out the maximum value for each numeric variable, for each re
 ```{r}
 happy_select %>%
   group_by(region) %>%
-  summarise(across(where(is.numeric), max)) %>% View()
+  summarise(across(where(is.numeric), max)) 
 ```
 
 

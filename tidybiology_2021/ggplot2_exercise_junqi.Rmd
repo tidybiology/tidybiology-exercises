@@ -6,7 +6,7 @@ author: Junqi Lu
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-install.packages("tidyverse")
+#install.packages("tidyverse")
 library(tidyverse)
 ```
 
@@ -15,7 +15,7 @@ library(tidyverse)
 Run the code in the code chunk below to load the necessary dataset -  `scRNAseq`
 
 ```{r}
-install.packages("remotes")
+#install.packages("remotes")
 remotes::install_github("devangthakkar/scRNAseq", force = TRUE)
 library(scRNAseq)
 data(scRNAseq)
@@ -110,23 +110,13 @@ ggplot(three_organ_df, aes(x = cell_1, y = cell_2)) +
               colour = 'green')
 ```
 
-Instead of having all the points be blue, change their colours according to which organ type they correspond to
-```{r}
-ggplot(three_organ_df, aes(x = cell_1, y = cell_2)) +
-  geom_point(aes(colour = organ),
-             size = 1.5,
-             alpha = 0.3) +
-  geom_abline(intercept = 0,
-              colour = 'green')
-```
-
 Split the plot above into three plots that correspond to the three organ types. Bonus: Have the label of each plot be in this format - organ: organ_name e.g. "organ: brain"
 ```{r}
 ggplot(three_organ_df, aes(x = cell_1, y = cell_2)) +
   geom_point(aes(colour = organ),
              size = 1.5,
              alpha = 0.3) +
-  facet_wrap(vars(organ), labeller = label_both) # ~organ also works in place of vars(organ)
+  facet_wrap(vars(organ), labeller = label_both, scales = "free_x") # ~organ also works in place of vars(organ)
 ```
 
 Using the un-split version of the previous plot, add marginal histograms above and to the right of this plot. Hint - use the `ggMarginal()` function from the `ggExtra()` package

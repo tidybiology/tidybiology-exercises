@@ -53,7 +53,7 @@ Make a facet plot to visualize the distributions of `ladder_score` for each regi
 happy_select %>% 
   ggplot(aes(ladder_score)) +
   geom_density() +
-  facet_wrap(~region)
+  facet_wrap(vars(region))
 ```
 
 Make a scatter plot of `logged_gdp_per_capita` versus `ladder_score` 
@@ -70,7 +70,7 @@ Add an appropriate trend line to the previous plot
 happy_select %>% 
   ggplot(aes(ladder_score, logged_gdp_per_capita)) +
   geom_point() +
-  geom_smooth(se = FALSE)
+  geom_smooth(method = "lm", se = FALSE)
 ```
 
 Add a title, subtitle, x-axis label, and y-axis label. Also change the overall look of the plot using your favourite `theme_*()` function 
@@ -79,7 +79,7 @@ Add a title, subtitle, x-axis label, and y-axis label. Also change the overall l
 happy_select %>% 
   ggplot(aes(ladder_score, logged_gdp_per_capita)) +
   geom_point() +
-  geom_smooth(se = FALSE) +
+  geom_smooth(method = "lm", se = FALSE) +
   labs(title = "Does Money == Happiness?",
        subtitle = "Plotting Ladder Score against Log GDP Per Capita",
        x = "Ladder Score",
@@ -93,7 +93,7 @@ Add histograms for `logged_gdp_per_capita` and `ladder_score` to the previous pl
 p1 <- happy_select %>% 
         ggplot(aes(ladder_score, logged_gdp_per_capita)) +
         geom_point() +
-        geom_smooth(se = FALSE) +
+        geom_smooth(method = "lm", se = FALSE) +
         labs(title = "Does Money == Happiness?",
              subtitle = "Plotting Ladder Score against Log GDP Per Capita",
              x = "Ladder Score",

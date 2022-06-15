@@ -16,7 +16,7 @@ Run the code in the code chunk below to load the necessary dataset -  `scRNAseq`
 
 ```{r}
 #install.packages("remotes")
-remotes::install_github("devangthakkar/scRNAseq", force = TRUE)
+#remotes::install_github("devangthakkar/scRNAseq", force = TRUE)
 library(scRNAseq)
 data(scRNAseq)
 ```

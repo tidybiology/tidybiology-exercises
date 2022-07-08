@@ -7,7 +7,9 @@ author: Junqi Lu
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 #install.packages("tidyverse")
+# install.packages("ggExtra")
 library(tidyverse)
+library(ggExtra)
 ```
 
 ## Required packages and datasets

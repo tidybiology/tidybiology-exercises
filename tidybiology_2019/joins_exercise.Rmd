@@ -33,6 +33,7 @@ mitocarta <- mitocarta %>%
 ## Please answer the following questions
 
 Which columns in `proteins` and `mitocarta` can we use to join on?
+
 ```{r}
 glimpse(proteins)
 glimpse(mitocarta)
@@ -40,18 +41,21 @@ glimpse(mitocarta)
 ```
 
 Combine `proteins` and `mitocarta`, ensuring that ALL the rows from `proteins` are retained in the resulting dataframe. Save this as a new dataframe called `proteins_mito`
+
 ```{r}
 proteins_mito <- proteins %>% 
                   left_join(mitocarta, by = c("gene_name" = "symbol")) 
 ```
 
 How many missing values does `proteins_mito` contain in its `mito_domain_score` column?
+
 ```{r}
 proteins_mito %>% 
   count(mito_domain_score)
 ```
 
 Combine `proteins` and `mitocarta`, ensuring that there are no missing values in the `mito_domain_score` column of the resulting dataframe (call this new dataframe `mito_proteins`)
+
 ```{r}
 mito_proteins <- proteins %>% 
                   right_join(mitocarta, by = c("gene_name" = "symbol")) 
@@ -61,6 +65,7 @@ mito_proteins %>%
 ```
 
 Combine `proteins` and `mitocarta` in such a way that the resulting dataframe contains no missing values. Do not save the output but do confirm that there are no missing values in the output
+
 ```{r}
 proteins %>% 
   inner_join(mitocarta, by = c("gene_name" = "symbol")) %>% 

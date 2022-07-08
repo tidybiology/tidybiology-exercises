@@ -23,7 +23,8 @@ library(scRNAseq)
 data(scRNAseq)
 ```
 
-Take a quick look at contents of this dataset before attempting the question below
+Take a quick look at the contents of this dataset before attempting the questions below
+
 ```{r}
 glimpse(scRNAseq)
 head(scRNAseq)
@@ -33,13 +34,15 @@ head(scRNAseq)
 
 ## Please answer the following questions
 
-What is the distribution transcript lengths for the genes in this dataset? Hint - the relevant variable is `transcript_length`
+What is the distribution of transcript lengths for the genes in this dataset? Hint - the relevant variable is `transcript_length`
+
 ```{r}
 ggplot(scRNAseq, aes(transcript_length)) +
   geom_density()
 ```
 
 How many *unique* organs are represented in this dataset?
+
 ```{r}
 unique(scRNAseq$organ)
 ```
@@ -47,6 +50,7 @@ unique(scRNAseq$organ)
 Create a new data frame that only contains genes whose transcript length is less that 7500 bp long. Also discard all rows that contain "other" in the `organ` column.
 
 Call this new data frame `three_organ_df`
+
 ```{r}
 three_organ_df <- scRNAseq %>% 
                     filter(transcript_length < 7500,
@@ -54,6 +58,7 @@ three_organ_df <- scRNAseq %>%
 ```
 
 Create boxplots for transcript lengths for each organ type. Overlay the individual points on top of these boxplots
+
 ```{r}
 ggplot(three_organ_df, aes(x = organ, y = transcript_length)) +
   geom_boxplot() +
@@ -61,6 +66,7 @@ ggplot(three_organ_df, aes(x = organ, y = transcript_length)) +
 ```
 
 Give the previous plot appropriate labels for the x- and y-axes, and a title
+
 ```{r}
 ggplot(three_organ_df, aes(x = organ, y = transcript_length)) +
   geom_boxplot() +
@@ -71,6 +77,7 @@ ggplot(three_organ_df, aes(x = organ, y = transcript_length)) +
 ```
 
 Many of the points are obscuring each other. What's one way to "fix" this?
+
 ```{r}
 ggplot(three_organ_df, aes(x = organ, y = transcript_length)) +
   geom_boxplot() +
@@ -81,6 +88,7 @@ ggplot(three_organ_df, aes(x = organ, y = transcript_length)) +
 ```
 
 How would you make all the black points red?
+
 ```{r}
 ggplot(three_organ_df, aes(x = organ, y = transcript_length)) +
   geom_boxplot() +
@@ -90,19 +98,10 @@ ggplot(three_organ_df, aes(x = organ, y = transcript_length)) +
        title = "Distribution of Transcript Length for Genes in each Organ")
 ```
 
-How would you give each boxplot its own colour?
-```{r}
-ggplot(three_organ_df, aes(x = organ, y = transcript_length)) +
-  geom_boxplot(aes(colour = organ)) +
-  geom_jitter(colour = 'red') +
-  labs(x = "Organ names",
-       y = "Transcript Length",
-       title = "Distribution of Transcript Length for Genes in each Organ")
-```
-
 Plot the gene expression values for `cell_1` against `cell_2`. Make the points blue, change their size to 1.5, and adjust the transparency to 0.3
 
 Also, add a diagonal reference line (45 degrees) that intersects with the intercept. Set the colour of this line to green
+
 ```{r}
 ggplot(three_organ_df, aes(x = cell_1, y = cell_2)) +
   geom_point(colour = 'blue',
@@ -112,7 +111,19 @@ ggplot(three_organ_df, aes(x = cell_1, y = cell_2)) +
               colour = 'green')
 ```
 
+Change the plot above so that data points corresponding to different organ types have different colours
+
+```{r}
+ggplot(three_organ_df, aes(x = cell_1, y = cell_2)) +
+  geom_point(aes(colour = organ),
+             size = 1.5,
+             alpha = 0.3) +
+  geom_abline(intercept = 0,
+              colour = 'green')
+```
+
 Split the plot above into three plots that correspond to the three organ types. Bonus: Have the label of each plot be in this format - organ: organ_name e.g. "organ: brain"
+
 ```{r}
 ggplot(three_organ_df, aes(x = cell_1, y = cell_2)) +
   geom_point(aes(colour = organ),
@@ -122,6 +133,7 @@ ggplot(three_organ_df, aes(x = cell_1, y = cell_2)) +
 ```
 
 Using the un-split version of the previous plot, add marginal histograms above and to the right of this plot. Hint - use the `ggMarginal()` function from the `ggExtra()` package
+
 ```{r}
 p1 <- ggplot(three_organ_df, aes(x = cell_2, y = cell_1)) +
   geom_point(
@@ -134,12 +146,13 @@ p1 <- ggplot(three_organ_df, aes(x = cell_2, y = cell_1)) +
 
 ggExtra::ggMarginal(
   p = p1,
-  type = 'histogram', #You can use other type of marginal plots here
+  type = 'histogram', #You can use other types of marginal plots here
   fill = 'gray'
 )
 ```
 
 Give the previous plot appropriate labels for the x- and y-axes, and a title. Also make the x- and y-axis text bold, and remove the colour legend
+
 ```{r}
 p1 <- ggplot(three_organ_df, aes(x = cell_1, y = cell_2)) +
   geom_point(

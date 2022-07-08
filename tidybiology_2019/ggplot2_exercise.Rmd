@@ -48,7 +48,7 @@ The points in the previous plot obscure the boxplots. What's one way to fix this
 
 ```{r}
 ggplot(mitocarta, aes(x = hg19_chromosome, y = log(protein_length))) +
-  geom_boxplot(outlier.shape = NA) + # this gets rid of the outlier points produces by `geo_boxplot(`
+  geom_boxplot(outlier.shape = NA) + # this gets rid of the outlier points produced by `geom_boxplot()`
   geom_jitter(alpha = 0.1)
 ```
 

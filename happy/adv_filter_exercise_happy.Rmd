@@ -1,5 +1,5 @@
 ---
-title: "Dplyr Exercises"
+title: "Advanced Filter Exercises"
 output: html_document
 ---
 
@@ -46,7 +46,7 @@ Choose countries that are either in Europe or have a `ladder_score` above 7, and
 ```{r}
 happy_full %>% 
   filter(region %in% c("Western Europe", "Central and Eastern Europe")|ladder_score > 7,
-         healthy_life_expectancy > 70) %>% 
+         healthy_life_expectancy > 70) 
 ```
 
 Choose countries that have a `generosity` score that is between the median and mean `generosity` scores (inclusive) across all countries

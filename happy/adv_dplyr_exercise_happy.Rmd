@@ -1,0 +1,113 @@
+---
+title: "Advanced Dplyr Exercises"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#install.packages("tidyverse")
+library(tidyverse)
+```
+
+## Required packages and datasets
+
+Run the code in the code chunk below to load the necessary dataset - `happy_full`
+```{r}
+#install.packages("remotes")
+#remotes::install_github("matthewhirschey/tidybiology", force = TRUE)
+library(tidybiology)
+
+data(happy_full)
+```
+
+## Please answer the following questions
+
+Choose all the rows between and including 50 and 100 of `happy_full`
+
+```{r}
+happy_full %>% 
+  slice(n = 50:100)
+```
+
+Choose the 3 countries from each region that have the highest `generosity` scores of those regions
+
+```{r}
+happy_full %>% 
+  group_by(region) %>% 
+  slice_max(generosity, n = 3) %>% 
+  select(country_name, generosity)
+```
+
+Select only those columns from `happy_full` that contain the word "score" in their names
+
+```{r}
+happy_full %>% 
+  select(contains("score"))
+```
+
+Move the `generosity` column so that it appears after `region`
+
+```{r}
+happy_full %>% 
+  relocate(generosity, .after = region)
+```
+
+Select those columns from `happy_full` that contain **more than one** underscore 
+
+Hint: Use the stringr cheatsheet if you find this question tricky
+
+```{r}
+happy_full %>% 
+  select(matches("_[^_]+_"))
+```
+
+Compute the mean `ladder_score` for each `region`. Arrange the output so that "Southeast Asia" appears first
+
+Hint: Use `fct_relevel()`
+
+```{r}
+happy_full %>% 
+  mutate(region = fct_relevel(region, "Southeast Asia")) %>% 
+  group_by(region) %>% 
+  summarise(mean_ladder = mean(ladder_score))
+```
+
+Plot the `generosity` scores for each region as boxplots in **ascending** order of median value
+
+```{r}
+happy_full %>% 
+  ggplot(aes(fct_reorder(region, generosity), generosity)) +
+  geom_boxplot()
+```
+
+Compute the means of **all** the numeric variables separately for each `region` 
+
+```{r}
+happy_full %>% 
+  group_by(region) %>% 
+  summarise(across(where(is.numeric), mean)) 
+
+# bonus
+happy_full %>% 
+  group_by(region) %>% 
+  summarise(across(where(is.numeric), mean, .names = "mean_{.col}")) 
+```
+
+Divide each numeric variable by the sum of all the numeric variables for each row. Multiply all these values by 100. Save the output data frame as `happy_100` and confirm that the row sums of numeric variables in this data frame all equal 100
+
+Hint: First compute the row sums for all the numeric variables each country
+
+```{r}
+happy_100 <- happy_full %>% 
+              rowwise() %>% 
+              mutate(total = sum(c_across(where(is.numeric)))) %>% 
+              ungroup() %>% 
+              mutate(across(where(is.numeric), ~ ./total * 100)) 
+
+# confirm that all row sums = 100
+happy_100 %>% 
+  select(-total) %>% 
+  rowwise() %>% 
+  summarise(sum(c_across(where(is.numeric))))
+```
+

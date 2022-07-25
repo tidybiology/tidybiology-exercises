@@ -43,8 +43,6 @@ Relocate `continent` so that it appears as the *third* column of the output
 Hint: Use the `region` variable to solve this exercise
 
 ```{r}
-unique(happy_full$region)
-
 happy_full %>% 
   mutate(continent = case_when(
     str_detect(region, "Europe") ~ "Europe",
@@ -62,7 +60,7 @@ Part 1: Use `if_else()`
 
 ```{r}
 happy_full %>% 
-  mutate(is_prosperous = if_else(`ladder_score` > mean(`ladder_score`) | `logged_gdp_per_capita` > mean(`logged_gdp_per_capita`), TRUE, FALSE)) %>% 
+  mutate(is_prosperous = if_else(ladder_score > mean(ladder_score) | logged_gdp_per_capita > mean(logged_gdp_per_capita), TRUE, FALSE)) %>% 
   count(is_prosperous)
 ```
 
@@ -71,7 +69,7 @@ Part 2: Use `case_when()` to answer the previous question. Did you get the same 
 ```{r}
 happy_full %>% 
   mutate(is_prosperous = case_when(
-    `ladder_score` > mean(`ladder_score`) | `logged_gdp_per_capita` > mean(`logged_gdp_per_capita`) ~ TRUE,
+    ladder_score > mean(ladder_score) | logged_gdp_per_capita > mean(logged_gdp_per_capita) ~ TRUE,
     TRUE ~ FALSE
   )) %>% 
   count(is_prosperous)

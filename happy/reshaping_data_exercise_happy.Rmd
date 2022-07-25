@@ -75,5 +75,5 @@ happy_long %>%
 happy_long %>% 
   filter(country_name %in% c("Norway", "Thailand", "India")) %>% 
   ggplot(aes(country_name, values, fill = measurements)) +
-  geom_col(position = "dodge") # default is postition = "stack
+  geom_col(position = "dodge") # default is position = "stack"
 ```

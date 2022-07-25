@@ -93,7 +93,7 @@ happy_full %>%
   summarise(across(where(is.numeric), mean, .names = "mean_{.col}")) 
 ```
 
-Divide each numeric variable by the sum of all the numeric variables for each row. Multiply all these values by 100. Save the output data frame as `happy_100` and confirm that the row sums of numeric variables in this data frame all equal 100
+Divide each numeric variable by the sum of all the numeric variables for each row. Multiply all these values by 100. Save the output data frame as `happy_100` and confirm that the row sums of the original numeric variables in this data frame all equal 100
 
 Hint: First compute the row sums for all the numeric variables each country
 

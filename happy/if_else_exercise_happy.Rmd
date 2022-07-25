@@ -71,7 +71,7 @@ happy_full %>%
   count(wealthy) # in this case you are asking which European countries have a `logged_gdp_per_capita` that is higher than the mean ERUOPEAN average and not the mean GLOBAL average
 ```
 
-Create a new variable called `prosperous_and_in_europe` that is equal to TRUE if a country is in Europe and either has an above average `ladder_score` or an above avrage `logged_gdp_per_capita`. For all other countries, this variable should equal FALSE 
+Create a new variable called `prosperous_and_in_europe` that is equal to TRUE if a country is in Europe and either has an above average `ladder_score` or an above average `logged_gdp_per_capita`. For all other countries, this variable should equal FALSE 
 
 Count the number of TRUE and FALSE entries in this new variable
 

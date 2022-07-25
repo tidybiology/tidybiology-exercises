@@ -58,7 +58,6 @@ happy_full %>%
 
 Create a new variable called `wealthy` that is equal to TRUE if a country's `logged_gdp_per_capita` is higher than average, and equal to FALSE for all other countries. Count the number of TRUE and FALSE entries for this variable but *just for Europe*
 
-
 ```{r}
 happy_full %>% 
   mutate(wealthy = if_else(logged_gdp_per_capita > mean(logged_gdp_per_capita), TRUE, FALSE)) %>% 

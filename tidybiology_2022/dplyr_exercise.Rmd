@@ -25,8 +25,13 @@ View(cytomegalovirus) # View this data set
 ?cytomegalovirus # launches the help page for this data set
 ```
 
-Take a look at the `cytomegalovirus` data frame. How many different types of variables does it contain?
-What are the dimensions of this data frame?
+## Please answer the following questions 
+
+Take a look at the `cytomegalovirus` data frame. How many different types of variables does it contain? 
+
+Hint: Take a glimpse at your data  
+
+What are the dimensions of this data frame?  
 
 ```{r}
 glimpse(cytomegalovirus)
@@ -41,7 +46,7 @@ cytomegalovirus %>%
   select(time.to.transplant, time.to.agvhd, time.to.cgvhd, time.to.cmv)
 ```
 
-How would you everything between (and including) `CD34.dose` and `cmv`?
+How would you select everything between (and including) `CD34.dose` and `cmv`?
 
 ```{r}
 cytomegalovirus %>% 
@@ -70,6 +75,8 @@ cytomegalovirus %>%
 ```
 
 Filter out information for patients who have a **below average** time.to.transplant
+
+Hint: Use the base R function `mean()` for this question  
 
 ```{r}
 cytomegalovirus %>% 

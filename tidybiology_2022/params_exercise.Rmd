@@ -1,15 +1,14 @@
 ---
 title: 'Tidybiology: Class 5 Report Exercise'
-subtitle: 'My disease of interest is `r params$diagnosis`'
 output: html_document
 params:
   diagnosis: "acute myeloid leukemia"
+subtitle: 'My disease of interest is `r params$diagnosis`'
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
-library(tidybiology)
 library(medicaldata)
 
 data("cytomegalovirus")
@@ -39,51 +38,30 @@ CMV reactivation status is either 0 ("no") or 1 ("yes")
 #####STUDENTS START HERE#####
 
 # How many unique diagnoses are there in the `cytomegalovirus` data frame?
-unique(cytomegalovirus$diagnosis)
+
 
 # How many times does your disease of interest appear in this data frame?
 # Get this number and save it as `num_patients`
-cytomegalovirus %>% 
-  count(diagnosis) %>% 
-  arrange(desc(n))
 
-num_patients <- cytomegalovirus %>% 
-                  filter(diagnosis == params$diagnosis) %>% 
-                  count(diagnosis) %>% 
-                  arrange(desc(n)) %>% 
-                  slice(n = 1) %>% 
-                  pull(n)
+
+
 
 # Create an object called `my_choice` that contains data from `cytomegalovirus` JUST FOR your disease of interest
-my_choice <- cytomegalovirus %>% 
-  filter(diagnosis == params$diagnosis)
+
 
 # Using `my_choice`, count the number of "yes" and "no" entries for `cmv_status` 
-my_choice %>% 
-  count(cmv_status)
+
 
 # Using `my_choice`, count the number of "yes" and "no" entries for `cmv_status` by `akir_status` group. Save this as a new object called `my_choice_counts`
-my_choice_counts <- my_choice %>% 
-                      group_by(akir_status) %>% 
-                      count(cmv_status)
+
 ```
 
 ## Visualizing the relationship between the number of aKIR genes and CMV reactivation
 ```{r echo = FALSE}
 # Plot `my_choice_counts` as a bar graph
-my_choice_counts %>% 
-  ggplot(aes(akir_status, n, fill = cmv_status)) +
-  geom_col(position = position_dodge2(preserve = "single")) +
-  labs(title = "Effect of aKIR status on CMV reactivation",
-       subtitle = params$diagnosis) +
-  theme_bw()
+
 ```
 
 ## Analysis Summary
 
 My disease of interest is `r params$diagnosis`. There were `r num_patients` patients with this disease in this study. The total number of patients afflicted by this disease who experienced CMV reactivation was `r sum(my_choice$cmv_status == "yes")`, versus `r sum(my_choice$cmv_status == "no")` who did not. There were `r sum(my_choice$sex)` women and `r nrow(my_choice) - sum(my_choice$sex)` men with this disease, compared to `r sum(cytomegalovirus$sex)` women and `r nrow(cytomegalovirus) - sum(cytomegalovirus$sex)` men overall        
-
-```{r provenance, include=FALSE}
-#Session information for provenance and reproducibility
-session_provenance()
-```

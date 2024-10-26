@@ -40,7 +40,7 @@ patient_hx <- readr::read_csv(patient_hx_url)
 
 # Load proteins data
 # install.packages("remotes")
-# remotes::install_github("tidybiology.org/tidybiology", force = TRUE)
+# remotes::install_github("tidybiology/tidybiology", force = TRUE)
 
 library(tidybiology)
 data(proteins)

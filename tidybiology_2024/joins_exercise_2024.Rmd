@@ -1,5 +1,5 @@
 ---
-title: "Mastering Joins with `dplyr` - Answers"
+title: "Mastering Joins with `dplyr`"
 output: html_document
 ---
 
@@ -71,10 +71,7 @@ Inspect the `proteins` and `mitocarta` datasets to find the columns they have in
 
 ```{r}
 # Inspect the datasets to identify join columns
-glimpse(proteins)
-glimpse(mitocarta)
 
-# Observations: Use `gene_name` from `proteins` and `symbol` from `mitocarta` as join keys
 ```
 
 ## Exercise 2
@@ -84,8 +81,7 @@ Combine `proteins` and `mitocarta` retaining all rows from `proteins`. This is u
 Combine `proteins` and `mitocarta` so that all rows from `proteins` are retained. Save the result as a new dataframe called `proteins_mito`.
 
 ```{r}
-proteins_mito <- proteins %>%
-  dplyr::left_join(mitocarta, by = c("gene_name" = "symbol"))
+proteins
 ```
 
 ## Exercise 3: Counting Missing Values
@@ -96,9 +92,7 @@ Count the number of missing values in the `mito_domain_score` column of `protein
 
 ```{r}
 # Count missing values in mito_domain_score
-proteins_mito %>%
-  dplyr::filter(is.na(mito_domain_score)) %>%
-  dplyr::count()
+
 ```
 
 ## Exercise 4
@@ -108,8 +102,7 @@ Combine `proteins` and `mitocarta` retaining all rows from `mitocarta`. This app
 Combine `proteins` and `mitocarta` so that only rows with `mito_domain_score` values are included in the resulting dataframe. Save the result as `mito_proteins`.
 
 ```{r}
-mito_proteins <- proteins %>%
-  dplyr::right_join(mitocarta, by = c("gene_name" = "symbol"))
+proteins
 ```
 
 ## Exercise 5
@@ -119,15 +112,7 @@ Combine `proteins` and `mitocarta` retaining only common rows from both datasets
 Combine `proteins` and `mitocarta` ensuring no NA values remain in the resulting dataframe. Confirm there are no missing values.
 
 ```{r}
-# Inner join to keep only rows with matches in both datasets
-complete_proteins <- proteins %>%
-  dplyr::inner_join(mitocarta, by = c("gene_name" = "symbol"))
-
-# Confirm no missing values
-no_missing_values <- complete_proteins %>%
-  drop_na()
-
-nrow(complete_proteins) == nrow(no_missing_values) # TRUE if no missing values
+proteins
 ```
 
 # Resources for Further Learning

@@ -1,0 +1,76 @@
+---
+title: "Advanced Filter Exercises"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#install.packages("tidyverse")
+library(tidyverse)
+```
+
+## Required packages and datasets
+
+Run the code in the code chunk below to load the necessary dataset - `happy_full`
+```{r}
+#install.packages("remotes")
+#remotes::install_github("matthewhirschey/tidybiology", force = TRUE)
+library(tidybiology)
+
+data(happy_full)
+```
+
+## Please answer the following questions
+
+Choose countries that are NOT in Europe i.e. countries that have a `region` entry that is NOT equal to either "Western Europe" or "Central and Eastern Europe"
+
+```{r}
+happy_full %>% 
+  filter(!region %in% c("Western Europe", "Central and Eastern Europe")) 
+
+# or
+happy_full %>% 
+  filter(!str_detect(region, "Europe")) 
+```
+
+Choose countries that do NOT have an above average `healthy_life_expectancy` or above average `generosity` score
+
+```{r}
+happy_full %>% 
+  filter(!(healthy_life_expectancy > mean(healthy_life_expectancy)|
+         generosity > mean(generosity))) 
+```
+
+Choose countries that are either in Europe or have a `ladder_score` above 7, and have a `healthy_life_expectancy` above 70
+
+```{r}
+happy_full %>% 
+  filter(region %in% c("Western Europe", "Central and Eastern Europe")|ladder_score > 7,
+         healthy_life_expectancy > 70) 
+```
+
+Choose countries that have a `generosity` score that is between the median and mean `generosity` scores (inclusive) across all countries
+
+```{r}
+mean(happy_full$generosity)
+median(happy_full$generosity)
+
+happy_full %>% 
+  filter(generosity >= median(generosity),
+         generosity <= mean(generosity))
+# or
+happy_full %>% 
+  filter(between(generosity, median(generosity), mean(generosity)))
+```
+
+Choose countries whose `ladder_score` is equal to the mean `ladder_score` +/- the standard error of `ladder_score` across all countries
+
+Standard error formula - sd/sqrt(n)
+
+```{r}
+rows <- nrow(happy_full)
+
+happy_full %>% 
+  filter(near(ladder_score, mean(ladder_score), tol = sd(ladder_score)/sqrt(rows))) 
+```
+

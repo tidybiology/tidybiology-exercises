@@ -1,0 +1,125 @@
+---
+title: "Advanced Dplyr Exercise: Answers"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+# install.packages("tidyverse")
+library(tidyverse)
+
+# if (!require("BiocManager", quietly = TRUE))
+#     install.packages("BiocManager")
+
+# BiocManager::install("SummarizedExperiment")
+# BiocManager::install("ALL")
+
+library(SummarizedExperiment)
+library(ALL)
+
+# load ALL data
+data(ALL)
+
+# Convert this `ALL` (which is an ExpressionSet object) to a SummarizedExperiment object
+ALL_se <- makeSummarizedExperimentFromExpressionSet(ALL)
+
+# extract sample metadata and convert to data frame
+ALL_df <- colData(ALL_se) %>% 
+            data.frame() %>% 
+            tibble::rownames_to_column("sample") # this takes the rownames of `ALL_se` and populates a new column called `sample` with these values
+
+# extract counts for first gene, reshape, and combine with `ALL_df`
+gene_df <- assay(ALL_se, 1) %>% 
+  data.frame() %>% 
+  tibble::rownames_to_column("probe_ID") %>% 
+  dplyr::slice_head(n = 1) %>% # only keep first row
+  tidyr::pivot_longer(cols = !probe_ID,
+                      names_to = "sample",
+                      values_to = "counts") %>% 
+  dplyr::mutate(sample = str_extract(sample, "[^X]+")) %>% 
+  dplyr::select(!probe_ID) %>% 
+  dplyr::rename(gene_A = counts) %>% 
+  dplyr::slice_sample(prop = 4/5)
+
+ALL_df <- tibble::tibble(ALL_df) # convert to tibble
+
+# To learn more about Bioconductor and SummarizedExperiment objects - 
+# https://www.youtube.com/live/yFUr-gqnq5A?si=yt24Su5OaTxNnEeE
+
+```
+
+## Take a look at your data
+```{r}
+glimpse(ALL_df)
+glimpse(gene_df)
+```
+
+## Advanced `filter()` and `select()`
+```{r}
+# Only keep rows that contain either a "B" or a "T" value in the `BT` column
+# the wrong way
+ALL_df %>% 
+  dplyr::filter(BT == "B"|"T")
+
+# one correct way
+ALL_df %>% 
+  dplyr::filter(BT == "B"|BT == "T")
+
+# another correct way
+ALL_df %>% 
+  dplyr::filter(BT %in% c("B","T"))
+
+# Only keep columns that contain "." in their names
+ALL_df %>% 
+  dplyr::select(contains("."))
+```
+
+## Combining data frames
+```{r}
+# inner join
+gene_df %>% 
+  dplyr::inner_join(ALL_df, by = "sample")
+
+# left join
+gene_df %>% 
+  dplyr::left_join(ALL_df, by = "sample")
+# what happens if we change the order?
+ALL_df %>% 
+  dplyr::left_join(gene_df, by = "sample")
+# what's the difference?
+
+# right join
+gene_df %>% 
+  dplyr::right_join(ALL_df, by = "sample")
+
+# anti-join
+gene_df %>% 
+  dplyr::anti_join(ALL_df, by = "sample")
+```
+
+## Introducing the `{stringr}` package
+```{r}
+# detect all entries in the `mol.biol` column that contain a "/" in them
+str_detect(ALL_df$mol.biol, "/")
+
+# How many such entries are there?
+sum(str_detect(ALL_df$mol.biol, "/"))
+  
+# convert "/" to "-"
+str_replace(ALL_df$mol.biol, "/", "-")
+
+# make this change to `ALL_df` 
+ALL_df %>% 
+  dplyr::mutate(mol.biol = str_replace(mol.biol, "/", "-"))
+
+# stringr cheatsheet
+# https://evoldyn.gitlab.io/evomics-2018/ref-sheets/R_strings.pdf
+
+# Advanced example
+# Take a look at the `citog` column. Notice that there are some entries with parentheses in them
+# Populate a new column called "in_parentheses" that contains just this information (if present), including the parentheses
+ALL_df %>% 
+  dplyr::mutate(in_parentheses = str_extract_all(citog, "\\([^\\(\\)]+\\)")) %>% 
+  dplyr::select(citog, in_parentheses) %>% View()
+```
+

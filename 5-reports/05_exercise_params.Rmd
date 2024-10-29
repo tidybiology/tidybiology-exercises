@@ -1,0 +1,60 @@
+---
+title: "Tidybiology: Class 5 Report Exercise"
+subtitle: "My favorite gene is `r params$gene`"
+output: html_document  
+params: 
+  gene: "MDH1"
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(tidybiology)
+
+#clear environment
+#rm(list=ls()) 
+
+#Set theme
+theme_set(theme_light())
+```
+
+```{r include=FALSE}
+#####STUDENTS START HERE#####
+
+#Q: Which subcellular locations have most annotated proteins?
+#A:
+subcell %>% 
+  count(location, sort = TRUE)
+
+#Store an object
+top <- subcell %>% 
+  count(location, sort = TRUE) %>% 
+  top_n(1)
+
+#join with protein dataset to combine regions and lengths
+full <- subcell %>% 
+  left_join(proteins)
+
+#calculate average lengths of all proteins
+avg_length <- full %>% 
+  group_by(location) %>% 
+  summarize(mean_length = mean(length, na.rm = TRUE)) %>% #need to remove NAs to make fun(mean) work
+  arrange(desc(mean_length))
+
+#Store favorite gene
+fav <- full %>% 
+  filter(gene_name == params$gene)
+
+#store an object to call longer
+longer <- if_else(
+  fav$length > avg_length %>% filter(location == fav$location) %>% pull(mean_length), "longer", "shorter"
+)
+```
+
+  
+My favorite gene is `r fav$gene_name`, which encodes a protein that is primarily located in the `r fav$location` and is `r fav$length` amino acids long. The average length of proteins in the `r fav$location` is `r round(avg_length %>% filter(location == fav$location) %>% pull(mean_length),0)` amino acids, which makes `r fav$gene_name` `r longer` than average.
+  
+```{r provenance, include=FALSE}
+#Session information for provenance and reproducibility
+utils:::print.sessionInfo(sessionInfo()[-8]) 
+#You can remove an item from sessionInfo(), which is a list with a class attribute, by printing the resulting object omitting one of the list items (omitted list of packages installed, but not loaded)
+```

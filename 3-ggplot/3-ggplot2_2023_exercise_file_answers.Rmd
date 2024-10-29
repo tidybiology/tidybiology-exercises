@@ -1,0 +1,185 @@
+---
+title: "ggplot Exercise: Answers"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+# install.packages("tidyverse")
+library(tidyverse)
+
+# install.packages("esquisse")
+library(esquisse)
+
+# if (!require("BiocManager", quietly = TRUE))
+#     install.packages("BiocManager")
+
+# BiocManager::install("SummarizedExperiment")
+# BiocManager::install("ALL")
+
+library(SummarizedExperiment)
+library(ALL)
+
+# load ALL data
+data(ALL)
+
+# Convert this `ALL` (which is an ExpressionSet object) to a SummarizedExperiment object
+ALL_se <- makeSummarizedExperimentFromExpressionSet(ALL)
+
+# extract sample metadata and convert to data frame
+ALL_df <- colData(ALL_se) %>% 
+            data.frame() %>% 
+            tibble::rownames_to_column("sample") # this takes the rownames of `ALL_se` and populates a new column called `sample` with these values
+
+# extract counts for first gene, reshape, and combine with `ALL_df`
+ALL_df <- assay(ALL_se, 1) %>% 
+  data.frame() %>% 
+  tibble::rownames_to_column("probe_ID") %>% 
+  dplyr::slice_head(n = 1) %>% # only keep first row
+  tidyr::pivot_longer(cols = !probe_ID,
+                      names_to = "sample",
+                      values_to = "counts") %>% 
+  dplyr::mutate(sample = str_extract(sample, "[^X]+")) %>% 
+  dplyr::inner_join(ALL_df, by = "sample") %>% 
+  dplyr::select(!probe_ID) %>% 
+  dplyr::rename(gene_A = counts)
+
+# To learn more about Bioconductor and SummarizedExperiment objects - 
+# https://www.youtube.com/live/yFUr-gqnq5A?si=yt24Su5OaTxNnEeE
+
+```
+
+## Take a look at your data
+```{r}
+# To learn more about what the `ALL` object contains
+?ALL
+
+ALL_df %>% View()
+dim(ALL_df)
+glimpse(ALL_df)
+
+# can you identify two numeric columns?
+```
+
+## Exploring the anatomy of a ggplot
+```{r}
+# what do you expect to get by running just this function?
+ggplot()
+
+# and this?
+ggplot(data = ALL_df)
+
+# what about this?
+ggplot(data = ALL_df, x = age, y = gene_A)
+
+# and this?
+ggplot(data = ALL_df, aes(x = age, y = gene_A))
+# how is this line different from the one before it?
+
+# make a scatterplot of `age` against `gene_A`
+ggplot(data = ALL_df, aes(x = age, y = gene_A)) +
+  geom_point()
+
+# alternatively
+ALL_df %>% 
+  ggplot(aes(x = age, y = gene_A)) +
+  geom_point()
+
+# The above style allows you to easily chain together dplyr and ggplot2 code
+
+# Notice that there are "5 missing values"
+# Are these 5 missing `age` or `gene_A` values?
+sum(is.na(ALL_se$age))
+sum(is.na(ALL_se$gene_A))
+
+# Remove missing values before plotting
+ALL_df %>% 
+  dplyr::filter(!is.na(age)) %>% # removed 5 missing `age` values
+  ggplot(aes(x = age, y = gene_A)) +
+  geom_point()
+
+# Clean up labels and add a title
+ALL_df %>% 
+  dplyr::filter(!is.na(age)) %>% # removed 5 missing `age` values
+  ggplot(aes(x = age, y = gene_A)) +
+  geom_point() +
+  labs(x = "Age",
+       y = "Gene A expression",
+       title = "Visualizing gene A expression across different ages")
+?labs
+
+# Change the overall theme to something cleaner
+ALL_df %>% 
+  dplyr::filter(!is.na(age)) %>% # removed 5 missing `age` values
+  ggplot(aes(x = age, y = gene_A)) +
+  geom_point() +
+  labs(x = "Age",
+       y = "Gene A expression",
+       title = "Visualizing gene A expression across different ages") +
+  theme_bw()
+
+# rotate the age numbers so that they are all diagonally orientated
+ALL_df %>% 
+  dplyr::filter(!is.na(age)) %>% # removed 5 missing `age` values
+  ggplot(aes(x = age, y = gene_A)) +
+  geom_point() +
+  labs(x = "Age",
+       y = "Gene A expression",
+       title = "Visualizing gene A expression across different ages") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45))
+```
+
+## Another plot type - box plots
+```{r}
+# Visualize age distribution for men and women
+ALL_df %>% 
+  dplyr::filter(!is.na(age)) %>% # removed 5 missing `age` values
+  ggplot(aes(x = sex, y = age)) +
+  geom_boxplot()
+
+# Add individual data points to this plot
+ALL_df %>% 
+  dplyr::filter(!is.na(age)) %>% # removed 5 missing `age` values
+  ggplot(aes(x = sex, y = age)) +
+  geom_boxplot() +
+  geom_point()
+
+# add some jitter
+ALL_df %>% 
+  dplyr::filter(!is.na(age)) %>% # removed 5 missing `age` values
+  ggplot(aes(x = sex, y = age)) +
+  geom_boxplot() +
+  geom_jitter()
+
+# What happens if we reverse the order of geoms?
+ALL_df %>% 
+  dplyr::filter(!is.na(age)) %>% # removed 5 missing `age` values
+  ggplot(aes(x = sex, y = age)) +
+  geom_jitter() +
+  geom_boxplot()
+# order matters!!
+
+# Make all points red
+ALL_df %>% 
+  dplyr::filter(!is.na(age)) %>% # removed 5 missing `age` values
+  ggplot(aes(x = sex, y = age)) +
+  geom_boxplot() +
+  geom_jitter(col = "red")
+
+# Make female and male points different colours
+ALL_df %>% 
+  dplyr::filter(!is.na(age)) %>% # removed 5 missing `age` values
+  ggplot(aes(x = sex, y = age)) +
+  geom_boxplot() +
+  geom_jitter(aes(col = sex))
+```
+
+## Next steps
+https://www.data-to-viz.com/
+
+
+```{r}
+esquisser(ALL_df)
+```
+

@@ -1,0 +1,101 @@
+---
+title: "case_when() Exercises"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#install.packages("tidyverse")
+library(tidyverse)
+```
+
+## Required packages and datasets
+
+Run the code in the code chunk below to load the necessary dataset - `happy_full`
+```{r}
+#install.packages("remotes")
+#remotes::install_github("matthewhirschey/tidybiology", force = TRUE)
+library(tidybiology)
+
+data(happy_full)
+```
+
+## Please answer the following questions
+
+Create a new variable called `generosity_level` that has a value of "not generous" if the `geneoristy` score is less than 0, "moderately generous" if the `generosity` score is between and inclusive of 0 and 0.3, and "generous" for all other cases
+
+Relocate `generosity_level` so that it appears as the *second* column of the output (i.e. comes after `country_name`)
+
+```{r}
+happy_full %>% 
+  mutate(generosity_level = case_when(
+    generosity < 0 ~ "not generous",
+    generosity >= 0 & generosity <= 0.3 ~ "moderately generous",
+    TRUE ~ "generous"
+  )) %>% 
+  relocate(generosity_level, .after = country_name) 
+```
+
+Create a new variable called `continent` that is equal to "Europe" if a country is in Europe, "Asia" if a country is in Asia, and "Other" for all other countries
+
+Relocate `continent` so that it appears as the *third* column of the output
+
+Hint: Use the `region` variable to solve this exercise
+
+```{r}
+happy_full %>% 
+  mutate(continent = case_when(
+    str_detect(region, "Europe") ~ "Europe",
+    str_detect(region, "Asia") ~ "Asia",
+    TRUE ~ "Other"
+  )) %>% 
+  relocate(continent, .before = ladder_score)
+```
+
+Create a variable called `is_prosperous` that is equal to TRUE if a country's `ladder_score` is greater than average OR if a country's `logged_gdp_per_capita` is greater than average, and FALSE for all other countries
+
+Also, count the number of resulting TRUEs and FALSEs. Which is higher?
+
+Part 1: Use `if_else()` 
+
+```{r}
+happy_full %>% 
+  mutate(is_prosperous = if_else(ladder_score > mean(ladder_score) | logged_gdp_per_capita > mean(logged_gdp_per_capita), TRUE, FALSE)) %>% 
+  count(is_prosperous)
+```
+
+Part 2: Use `case_when()` to answer the previous question. Did you get the same output as before?
+
+```{r}
+happy_full %>% 
+  mutate(is_prosperous = case_when(
+    ladder_score > mean(ladder_score) | logged_gdp_per_capita > mean(logged_gdp_per_capita) ~ TRUE,
+    TRUE ~ FALSE
+  )) %>% 
+  count(is_prosperous)
+```
+
+Create a new variable called `health_and_happiness` that equals - 
+
+- "healthy and happy" if the `healthy_life_expectancy` and `ladder_score` are both above average
+- "just healthy" if the `healthy_life_expectancy` is above average but `ladder_score` is not
+- "just happy" if the `ladder_score` is above average but `healthy_life_expectancy` is not
+- "neither" for all other cases
+
+Plot the counts of each occurrence as a bar graph
+
+*BONUS* - Plot the bar graph in increasing order of counts
+
+```{r}
+happy_full %>% 
+  mutate(health_and_happiness = case_when(
+    healthy_life_expectancy > mean(healthy_life_expectancy) & ladder_score > mean(ladder_score) ~ "healthy and happy",
+    healthy_life_expectancy > mean(healthy_life_expectancy) & !ladder_score > mean(ladder_score) ~ "just healthy",
+    !healthy_life_expectancy > mean(healthy_life_expectancy) & ladder_score > mean(ladder_score) ~ "just happy",
+    TRUE ~ "neither"
+  )) %>% 
+  mutate(health_and_happiness = health_and_happiness %>%  fct_infreq() %>% fct_rev()) %>% 
+  ggplot(aes(health_and_happiness)) +
+  geom_bar()
+```
+

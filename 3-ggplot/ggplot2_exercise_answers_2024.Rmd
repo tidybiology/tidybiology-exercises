@@ -1,0 +1,133 @@
+---
+title: "Ggplot2 Exercises"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+install.packages("tidyverse")
+library(tidyverse)
+```
+
+## Required packages and datasets
+
+Run the code in the code chunk below to load the necessary dataset -  `mitocarta`
+
+```{r}
+install.packages("remotes")
+remotes::install_github("matthewhirschey/mitocarta", force = TRUE)
+library(mitocarta)
+data(mitocarta)
+```
+
+## Please answer the following questions
+
+Generate a boxplot of protein lengths for each chromosome. Hint - the relevant variables are `hg19_chromosome` and `protein_length`
+
+```{r}
+ggplot(mitocarta, aes(x = hg19_chromosome, y = protein_length)) +
+  geom_boxplot()
+```
+
+Log transforming protein length could help improve the previous plot. How would you do this?
+
+```{r}
+ggplot(mitocarta, aes(x = hg19_chromosome, y = log(protein_length))) +
+  geom_boxplot()
+```
+
+How would you overlay the individual points over these boxplots? 
+
+```{r}
+ggplot(mitocarta, aes(x = hg19_chromosome, y = log(protein_length))) +
+  geom_boxplot() +
+  geom_jitter()
+```
+
+The points in the previous plot obscure the boxplots. What's one way to fix this?
+
+```{r}
+ggplot(mitocarta, aes(x = hg19_chromosome, y = log(protein_length))) +
+  geom_boxplot(outlier.shape = NA) + # this gets rid of the outlier points produced by `geom_boxplot()`
+  geom_jitter(alpha = 0.1)
+```
+
+Boxplots are a nice way to view distributions. Another way to visualize this is by using violin plots. How would you do this?
+
+```{r}
+ggplot(mitocarta, aes(x = hg19_chromosome, y = log(protein_length))) +
+  geom_violin()
+```
+
+Let's make this plot nicer. How would you add the following as a plot title - "Protein length distributions across different chromosomes"? Also, remove the underscore from the y-axis label
+
+```{r}
+ggplot(mitocarta, aes(x = hg19_chromosome, y = log(protein_length))) +
+  geom_violin() +
+  labs(title = "Protein length distributions across different chromosomes",
+       y = "log(protein length)")
+```
+
+Now make the title bold
+
+```{r}
+ggplot(mitocarta, aes(x = hg19_chromosome, y = log(protein_length))) +
+  geom_violin() +
+  labs(title = "Protein length distributions across different chromosomes",
+       y = "log(protein length)") +
+  theme(plot.title = element_text(face = "bold"))
+```
+
+Let's improve the aesthetics of this plot by using one of the pre-set themes
+
+```{r}
+ggplot(mitocarta, aes(x = hg19_chromosome, y = log(protein_length))) +
+  geom_violin() +
+  labs(title = "Protein length distributions across different chromosomes",
+       y = "log(protein length)") +
+  theme_minimal() + 
+  theme(plot.title = element_text(face = "bold")) # note: this MUST come after `theme_minimal()` if you want the text to continue to be bold
+```
+
+There's a violin plot that corresponds to proteins whose chromosome language is unknown (i.e. `NA`). Remove these data points from the previous plot
+
+```{r}
+mitocarta %>% 
+  filter(hg19_chromosome != "NA") %>% 
+  ggplot(aes(x = hg19_chromosome, y = log(protein_length))) +
+  geom_violin() +
+  labs(title = "Protein length distributions across different chromosomes",
+       y = "log(protein length)") +
+  theme_minimal() + 
+  theme(plot.title = element_text(face = "bold"))
+```
+
+Make the same plot as the one above but with the axes flipped (meaning - `hg19_chromosome` is now the y-axis, and `log(protein length)` is now the x-axis)
+
+```{r}
+mitocarta %>% 
+  filter(hg19_chromosome != "NA") %>% 
+  ggplot(aes(x = hg19_chromosome, y = log(protein_length))) +
+  geom_violin() +
+  labs(title = "Protein length distributions across different chromosomes",
+       y = "log(protein length)") +
+  theme_minimal() + 
+  theme(plot.title = element_text(face = "bold")) +
+  coord_flip()
+```
+
+Make the same plot as above but with the chromosomes reordered i.e. chromosome 1 is at the top.
+
+```{r}
+mitocarta %>% 
+  filter(hg19_chromosome != "NA") %>% 
+  ggplot(aes(x = fct_rev(hg19_chromosome), y = log(protein_length))) +
+  geom_violin() +
+  labs(title = "Protein length distributions across different chromosomes",
+       y = "log(protein length)") +
+  theme_minimal() + 
+  theme(plot.title = element_text(face = "bold")) +
+  coord_flip()
+```
+
+

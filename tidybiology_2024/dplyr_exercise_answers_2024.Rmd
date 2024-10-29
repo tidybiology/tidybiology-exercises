@@ -200,5 +200,5 @@ Replace all occurrences of "." with "-" in the relevant variable names
 
 ```{r}
 cytomegalovirus %>% 
-  dplyr::rename_with(~ str_replace_all(.x, ".", "_") , contains("_"))
+  dplyr::rename_with(~ str_replace_all(.x, "\\.", "-") , contains("."))
 ```

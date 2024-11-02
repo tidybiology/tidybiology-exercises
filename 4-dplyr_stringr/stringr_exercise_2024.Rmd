@@ -62,6 +62,7 @@ Given the `proteins` dataset, count the occurrences of lysine (represented by "K
 proteins
 
 # Identify protein with the highest lysine content
+
 ```
 
 ## Exercise 2: Detecting Signatures in Protein Sequences
@@ -75,6 +76,7 @@ Given the `proteins` dataset, identify which sequences contain the "KR" pattern 
 proteins
 
 # Count proteins with "KR" pattern (has_kr == TRUE)
+
 ```
 
 ## Exercise 3: Replacing Text to Standardize Data
@@ -105,6 +107,7 @@ Using the `patient_hx` dataset, standardize the values in the `health_status` co
 ```{r exercise3-answer_chunk, purl=FALSE}
 # Standardize "Normal blood sugar and cholesterol" to "Normal"
 patient_hx
+
 ```
 
 ## Basics of Regular Expressions
@@ -192,10 +195,11 @@ Using the `patient_hx` dataset, identify how many patients have a father in thei
 
 ```{r exercise4-answer_chunk, purl=FALSE}
 # Count occurrences of "Father" or "father" at the start, excluding "grandfather"
-patient_hx
+family_history
+
 ```
 
-# Exercise 5: Filtering Based on Detected Patterns
+## Exercise 5: Filtering Based on Detected Patterns
 
 Learn to filter data based on detected patterns, crucial for narrowing down datasets, like filtering proteins with a specific signature.
 
@@ -206,6 +210,61 @@ Use `str_detect()` within `dplyr::filter()` to isolate specific rows based on pa
 ```{r exercise5-answer_chunk, purl=FALSE}
 # Filter proteins with the E-box signature "CANNTG"
 proteins
+
+```
+
+# Advanced Regex
+
+Regular expressions ("regex") offer a way to match patterns in text by combining characters and symbols with special meanings. Regex is extremely versatile in biological data analysis, especially in complex sequence analyses and patient data extraction tasks.
+
+Below, we cover some advanced regex techniques, including `lookaheads` and `lookbehinds`, character `classes`, and `quantifiers`. These exercises will build upon earlier string manipulation skills and apply regex for more complex biological pattern-matching tasks.
+
+## Advanced Exercise 1: Positive and Negative Lookaheads
+
+Learn to use lookaheads to match patterns based on characters that follow (or don’t follow) a specified point. This is particularly useful when needing to locate a sequence with specific contexts.
+
+Find DNA sequences where "TATA" is followed by an A or T, without including "TATA" that is followed by other nucleotides.
+
+```{r}
+# Sample DNA sequences
+dna_sequences <- data.frame(
+  sequence = c("TATACGGA", "TATATGCA", "GGTATAGG")
+)
+
+# Detect "TATA" followed by A or T using positive lookahead
+
+```
+
+## Advanced Exercise 2: Negative Lookaheads
+
+Use negative lookaheads to match patterns based on characters that do not follow a specified point, helpful for excluding unwanted patterns.
+
+Identify patients with "Mother" in their health history but exclude cases mentioning "Grandmother".
+
+```{r}
+# Sample family history data
+family_history <- data.frame(
+  relationship = c("Mother", "grandmother", "Grandmother", "Motherly")
+)
+
+# Match "Mother" but exclude "Grandmother" using negative lookahead
+
+```
+
+## Advanced Exercise 3: Character Classes and Quantifiers
+
+Use character classes and quantifiers for matching multiple characters or sequences of specific lengths.
+
+Identify proteins containing any three consecutive polar amino acids (e.g., S, T, Y, N, Q). This example applies character classes and quantifiers for biological sequence patterns.
+
+```{r}
+# Sample protein sequences
+protein_sequences <- data.frame(
+  sequence = c("ASTYNGKK", "GGYSTYYT", "KPGGRKYY")
+)
+
+# Match sequences with three consecutive polar amino acids
+
 ```
 
 # Resources for Further Learning

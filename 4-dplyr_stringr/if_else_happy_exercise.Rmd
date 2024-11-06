@@ -1,0 +1,83 @@
+---
+title: "If/Else Exercises"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#install.packages("tidyverse")
+library(tidyverse)
+```
+
+## Required packages and datasets
+
+Run the code in the code chunk below to load the necessary dataset - `happy_full`
+```{r}
+#install.packages("remotes")
+#remotes::install_github("matthewhirschey/tidybiology", force = TRUE)
+library(tidybiology)
+
+data(happy_full)
+```
+
+## Please answer the following questions
+
+Create a new variable called `wealthy` that is equal to TRUE if a country's `logged_gdp_per_capita` is higher than average and equal to FALSE otherwise
+
+Count the number of TRUEs and FALSEs in this new variable
+
+```{r}
+happy_full %>% 
+  mutate(wealthy = if_else(logged_gdp_per_capita > mean(logged_gdp_per_capita), TRUE, FALSE)) %>% 
+  count(wealthy)
+```
+
+Create a new variable called `in_europe` that is equal to "in Europe" if a country is in Europe and equal to "not in Europe" for all other countries
+
+Hint: Use the `region` variable to solve this exercise
+
+Count the number of countries that are in Europe and not in Europe
+
+```{r}
+unique(happy_full$region)
+
+happy_full %>% 
+  mutate(in_europe = if_else(str_detect(region, "Europe"), "in Europe", "not in Europe")) %>% 
+  count(in_europe)
+```
+
+Create a new variable called `wealthy_or_in_europe` that is equal to "yes" if a country's `logged_gdp_per_capita` is higher than average or if it is in Europe, and equal to "no" for all other countries
+
+Count the number of "yes" and "no" entries in this new variable
+
+```{r}
+happy_full %>% 
+  mutate(wealthy_or_in_europe = if_else(logged_gdp_per_capita > mean(logged_gdp_per_capita)|str_detect(region, "Europe"), "yes", "no")) %>% 
+  count(wealthy_or_in_europe)
+```
+
+Create a new variable called `wealthy` that is equal to TRUE if a country's `logged_gdp_per_capita` is higher than average, and equal to FALSE for all other countries. Count the number of TRUE and FALSE entries for this variable but *just for Europe*
+
+```{r}
+happy_full %>% 
+  mutate(wealthy = if_else(logged_gdp_per_capita > mean(logged_gdp_per_capita), TRUE, FALSE)) %>% 
+  filter(str_detect(region, "Europe")) %>% 
+  count(wealthy)
+
+# BUT NOT -
+happy_full %>% 
+  filter(str_detect(region, "Europe")) %>% 
+  mutate(wealthy = if_else(logged_gdp_per_capita > mean(logged_gdp_per_capita), TRUE, FALSE)) %>% 
+  count(wealthy) # in this case you are asking which European countries have a `logged_gdp_per_capita` that is higher than the mean ERUOPEAN average and not the mean GLOBAL average
+```
+
+Create a new variable called `prosperous_and_in_europe` that is equal to TRUE if a country is in Europe and either has an above average `ladder_score` or an above average `logged_gdp_per_capita`. For all other countries, this variable should equal FALSE 
+
+Count the number of TRUE and FALSE entries in this new variable
+
+```{r}
+happy_full %>% 
+  mutate(prosperous_and_in_europe  = if_else(str_detect(region, "Europe") & (ladder_score > mean(ladder_score)|logged_gdp_per_capita > mean(logged_gdp_per_capita)), TRUE, FALSE)) %>% 
+  count(prosperous_and_in_europe) # note the parentheses around the OR statement!
+```
+

@@ -1,0 +1,79 @@
+---
+title: "Reshaping Data Exercises"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#install.packages("tidyverse")
+library(tidyverse)
+```
+
+## Required packages and datasets
+
+Run the code in the code chunk below to load the necessary dataset - `happy_full`
+```{r}
+#install.packages("remotes")
+#remotes::install_github("matthewhirschey/tidybiology", force = TRUE)
+library(tidybiology)
+
+data(happy_full)
+```
+
+## Please answer the following questions
+
+Is `happy_full` wide or long?
+
+```{r}
+glimpse(happy_full)
+```
+
+First select the following columns - `country_name`, `region`, `ladder_score`, `healthy_life_expectancy`, and `generosity`
+
+Next work out the mean of the three measurements for each country and call this variable `mean`
+
+Finally, produce an output data frame that contains two columns - `country_name` and `mean`. Arrange this data frame in ascending order of mean value
+
+```{r}
+happy_full %>% 
+  select(country_name, region, ladder_score, healthy_life_expectancy, generosity) %>% 
+  pivot_longer(cols = !c(country_name, region),
+              names_to = "measurements",
+              values_to = "values") %>% 
+  group_by(country_name) %>% 
+  summarise(mean = mean(values)) %>% 
+  arrange(mean) 
+  
+# versus
+happy_full %>% 
+  select(country_name, region, ladder_score, healthy_life_expectancy, generosity) %>% 
+  rowwise() %>% 
+  mutate(mean = mean(c_across(ladder_score:generosity))) %>% 
+  select(country_name, mean) %>% 
+  arrange(mean) 
+```
+
+First select the following columns - `country_name`, `region`, `ladder_score`, `healthy_life_expectancy`, and `generosity`
+
+Plot a **stacked** bar graph of these three measurements for the countries Norway, India, and Thailand
+
+Plot a **grouped** bar graph of these three measurements for the countries Norway, India, and Thailand
+
+```{r}
+# stacked
+happy_long <- happy_full %>% 
+                select(country_name, region, ladder_score, healthy_life_expectancy, generosity) %>% 
+                pivot_longer(cols = !c(country_name, region),
+                             names_to = "measurements",
+                             values_to = "values") 
+happy_long %>%  
+  filter(country_name %in% c("Norway", "Thailand", "India")) %>% 
+  ggplot(aes(country_name, values, fill = measurements)) +
+  geom_col()
+
+# grouped bar graph
+happy_long %>% 
+  filter(country_name %in% c("Norway", "Thailand", "India")) %>% 
+  ggplot(aes(country_name, values, fill = measurements)) +
+  geom_col(position = "dodge") # default is position = "stack"
+```

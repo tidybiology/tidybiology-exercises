@@ -1,0 +1,95 @@
+---
+title: "Dplyr Exercises"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+install.packages("tidyverse")
+library(tidyverse)
+```
+
+## Required packages and datasets
+
+Run the code in the code chunk below to load the necessary datasets - `chromosome` and `mitocarta`
+```{r}
+install.packages("remotes")
+remotes::install_github("matthewhirschey/tidybiology", force = TRUE)
+remotes::install_github("matthewhirschey/mitocarta", force = TRUE)
+library(tidybiology)
+library(mitocarta)
+data(chromosome)
+data(mitocarta)
+```
+
+## Please answer the following questions
+
+How many observations and variables does `chromosome` contain?
+
+```{r}
+dim(chromosome)
+# or
+glimpse(chromosome)
+```
+
+What are the top five chromosomes in terms of the number of protein coding genes (look at the `protein_codinggenes` variable)? Based on your output, would you say that chromosome length is proportional to the number of protein coding genes?
+
+```{r}
+chromosome %>% 
+  arrange(desc(protein_codinggenes)) %>% 
+  slice(1:5)
+```
+
+Using the `protein_codinggenes` and `pseudo_genes` variables, create a new variable called `total_genes` that contains the sum of protein coding genes and pseudogenes. Save the output of this as a new object, also called `chromosome`
+
+```{r}
+chromosome <- chromosome %>% 
+                mutate(total_genes = protein_codinggenes + pseudo_genes)
+```
+
+How many chromosomes have a higher than average total number of genes? 
+
+```{r}
+chromosome %>% 
+  filter(total_genes > mean(total_genes)) %>% 
+  nrow()
+```
+
+Take a glimpse at the `mitocarta` dataframe
+
+```{r}
+glimpse(mitocarta)
+```
+
+How many *unique* entries are there in the column `mito_domain_score`?
+
+```{r}
+mitocarta %>% 
+  distinct(mito_domain_score)
+```
+
+Remove all rows that have `NA` values in the `mito_domain_score` column. Replace `mitocarta` with this new dataframe
+
+```{r}
+mitocarta <- mitocarta %>% 
+               filter(mito_domain_score != "NA")
+# alternatively
+mitocarta <- mitocarta %>% 
+               drop_na(mito_domain_score)
+```
+
+What is the average length of all the proteins in `mitocarta`?
+
+```{r}
+mitocarta %>% 
+  summarise(mean_length = mean(protein_length))
+```
+
+What is the average protein length for each of the three `mito_domain_score` categories?
+
+```{r}
+mitocarta %>% 
+  group_by(mito_domain_score) %>% 
+  summarise(mean_length = mean(protein_length))
+```
+

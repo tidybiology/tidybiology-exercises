@@ -49,6 +49,8 @@ cytomegalovirus %>%
 num_patients <- cytomegalovirus %>% 
                   filter(diagnosis == params$diagnosis) %>% 
                   count(diagnosis) %>% 
+                  arrange(desc(n)) %>% 
+                  slice(n = 1) %>% 
                   pull(n)
 
 # Create an object called `my_choice` that contains data from `cytomegalovirus` JUST FOR your disease of interest
